@@ -1,4 +1,4 @@
-package de.boadu.leichtathletik.vereinsdatenbank;
+package de.boadu.leichtathletik.vereinsdatenbank.competitionresault;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
