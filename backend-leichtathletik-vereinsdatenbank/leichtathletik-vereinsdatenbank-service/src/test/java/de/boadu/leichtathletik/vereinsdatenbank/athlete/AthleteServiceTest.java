@@ -1,8 +1,8 @@
 package de.boadu.leichtathletik.vereinsdatenbank.athlete;
 
-import de.boadu.leichtathletik.vereinsdatenbank.athlete.dao.AthleteDAO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AthleteRepository;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,29 +30,7 @@ public class AthleteServiceTest {
 
     @BeforeEach
     public void setUp(){
-
-        this.maxMustermann = new AthleteDTO() {
-            @Override
-            public int getStartpassnummer() {
-                return 1111;
-            }
-
-            @Override
-            public String getName() {
-                return "Max";
-            }
-
-            @Override
-            public String getSurname() {
-                return "Mustermann";
-            }
-
-            @Override
-            public int getYearOfBirth() {
-                return 1999;
-            }
-        };
-
+        this.maxMustermann = new AthleteDTO(1111, "Max", "Mustermann", 1999);
     }
 
     @Test
@@ -65,10 +43,27 @@ public class AthleteServiceTest {
 
         when(this.athleteRepository.findAthleteByNameIgnoreCase(max)).thenReturn(athletes);
 
-        List<AthleteDTO> athleteByName = this.athleteService.getAthleteByName(max);
+        List<AthleteDTO> athleteByName = this.athleteService.getAthletesByName(max);
 
-        assertThat(athleteByName.get(0).getName()).isEqualTo(athletes.get(0).getName());
+        assertThat(athleteByName).isEqualTo(athletes);
 
+    }
+
+    @Test
+    public void whenAthletesWithSurnameExist_thenReturnAthletes(){
+
+        String mustermann = "Mustermann";
+
+        List<AthleteDTO> athletesBySurname = new ArrayList<>();
+        athletesBySurname.add(this.maxMustermann);
+
+        when(this.athleteRepository.findAthleteBySurnameIgnoreCase(mustermann)).thenReturn(athletesBySurname);
+
+        List<AthleteDTO> foundAthletesBySurname = this.athleteService.getAthletesBySurname(mustermann);
+
+        System.out.println(foundAthletesBySurname);
+
+        assertThat(foundAthletesBySurname).isEqualTo(athletesBySurname);
     }
 
 }
