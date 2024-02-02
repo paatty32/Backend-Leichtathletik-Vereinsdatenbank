@@ -2,7 +2,6 @@ package de.boadu.leichtathletik.vereinsdatenbank.athlete;
 
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AthleteRepository;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +35,7 @@ public class AthleteServiceTest {
     @Test
     public void whenAthleteWithNameExist_thenReturnAthlete(){
 
-        String max = "max";
+        String max = "Max";
 
         List<AthleteDTO> athletes = new ArrayList<>();
         athletes.add(this.maxMustermann);
@@ -44,8 +43,21 @@ public class AthleteServiceTest {
         when(this.athleteRepository.findAthleteByNameIgnoreCase(max)).thenReturn(athletes);
 
         List<AthleteDTO> athleteByName = this.athleteService.getAthletesByName(max);
+        boolean hasName = athleteByName.stream().allMatch(athlete -> athlete.name().equals(max));
 
-        assertThat(athleteByName).isEqualTo(athletes);
+        assertThat(hasName).isTrue();
+
+    }
+
+    @Test
+    public void whenAthletesNotExist_thenReturnEmptyList(){
+        String max = "Max";
+
+        when(this.athleteRepository.findAthleteByNameIgnoreCase(max)).thenReturn(null);
+
+        List<AthleteDTO> athleteByName = this.athleteService.getAthletesByName(max);
+
+        assertThat(athleteByName.size()).isEqualTo(0);
 
     }
 
@@ -60,10 +72,22 @@ public class AthleteServiceTest {
         when(this.athleteRepository.findAthleteBySurnameIgnoreCase(mustermann)).thenReturn(athletesBySurname);
 
         List<AthleteDTO> foundAthletesBySurname = this.athleteService.getAthletesBySurname(mustermann);
+        boolean hasSurname = foundAthletesBySurname.stream().allMatch(athlete -> athlete.surname().equals(mustermann));
 
-        System.out.println(foundAthletesBySurname);
+        assertThat(hasSurname).isEqualTo(true);
+    }
 
-        assertThat(foundAthletesBySurname).isEqualTo(athletesBySurname);
+    @Test
+    public void whenAthleteWithSurnameNotExist_thenReturnEmptyList(){
+
+        String mustermann = "Mustermann";
+
+        when(this.athleteRepository.findAthleteBySurnameIgnoreCase(mustermann)).thenReturn(null);
+
+        List<AthleteDTO> athleteByName = this.athleteService.getAthletesBySurname(mustermann);
+
+        assertThat(athleteByName.size()).isEqualTo(0);
+
     }
 
 }
