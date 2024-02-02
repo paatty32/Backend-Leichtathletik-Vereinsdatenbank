@@ -20,7 +20,12 @@ public class AthleteController {
 
     @GetMapping("/{name}")
     public List<AthleteDTO> getAthleteByName(@PathVariable String name){
-        return this.athleteService.getAthleteByName(name);
+        return this.athleteService.getAthletesByName(name);
+    }
+
+    @GetMapping("/{surname}")
+    public List<AthleteDTO> getAthletesBySurname(@PathVariable String surname){
+        return this.athleteService.getAthletesBySurname(surname);
     }
 
 

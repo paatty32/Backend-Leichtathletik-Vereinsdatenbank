@@ -17,8 +17,13 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public List<AthleteDTO> getAthleteByName(String name) {
+    public List<AthleteDTO> getAthletesByName(String name) {
 
         return this.athleteRepository.findAthleteByNameIgnoreCase(name);
+    }
+
+    @Override
+    public List<AthleteDTO> getAthletesBySurname(String surname) {
+        return this.athleteRepository.findAthleteBySurnameIgnoreCase(surname);
     }
 }

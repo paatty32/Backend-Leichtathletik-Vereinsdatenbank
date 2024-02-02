@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface AthleteService {
 
-    List<AthleteDTO> getAthleteByName(String name);
+    List<AthleteDTO> getAthletesByName(String name);
+
+    List<AthleteDTO> getAthletesBySurname(String name);
 
 }
