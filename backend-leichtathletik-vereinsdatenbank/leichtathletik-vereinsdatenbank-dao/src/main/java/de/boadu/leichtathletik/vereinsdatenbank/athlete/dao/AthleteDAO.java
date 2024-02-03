@@ -1,5 +1,6 @@
-package de.boadu.leichtathletik.vereinsdatenbank;
+package de.boadu.leichtathletik.vereinsdatenbank.athlete.dao;
 
+import de.boadu.leichtathletik.vereinsdatenbank.competitionresault.CompetitionResultsDAO;
 import jakarta.persistence.*;
 
 import java.util.List;
