@@ -10,4 +10,6 @@ public interface AthleteService {
 
     List<AthleteDTO> getAthletesBySurname(String name);
 
+    AthleteDTO getAthleteByStartpassnummer(int startpassnummer);
+
 }

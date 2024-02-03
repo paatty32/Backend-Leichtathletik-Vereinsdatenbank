@@ -90,4 +90,30 @@ public class AthleteServiceTest {
 
     }
 
+    @Test
+    public void whenAthleteWithStartpassnumemrExist_thenReturnAthlete(){
+
+        int startpassnummer = 1111;
+
+        when(this.athleteRepository.findAthleteByStartpassnummer(startpassnummer)).thenReturn(this.maxMustermann);
+
+        AthleteDTO athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
+
+        assertThat(athleteByStartpassnummer).isEqualTo(this.maxMustermann);
+
+    }
+
+    @Test
+    public void whenAthleteWithStartpassnummerNotExist_thenReturnAthleteWithStarpassnummerZero(){
+
+        int startpassnummer = 1111;
+
+        when(this.athleteRepository.findAthleteByStartpassnummer(startpassnummer)).thenReturn(new AthleteDTO(0,null,null,0));
+
+        AthleteDTO athleteNotFound = this.athleteRepository.findAthleteByStartpassnummer(startpassnummer);
+
+        assertThat(athleteNotFound.startpassnummer()).isEqualTo(0);
+
+    }
+
 }

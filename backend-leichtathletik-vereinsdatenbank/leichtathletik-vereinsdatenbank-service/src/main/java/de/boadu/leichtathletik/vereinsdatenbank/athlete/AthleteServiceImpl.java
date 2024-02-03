@@ -1,6 +1,5 @@
 package de.boadu.leichtathletik.vereinsdatenbank.athlete;
 
-import de.boadu.leichtathletik.vereinsdatenbank.athlete.AthleteService;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AthleteRepository;
 import org.springframework.stereotype.Service;
@@ -46,5 +45,20 @@ public class AthleteServiceImpl implements AthleteService {
         }
 
         return athleteBySurnameIgnoreCase;
+    }
+
+    @Override
+    public AthleteDTO getAthleteByStartpassnummer(int startpassnummer) {
+
+        AthleteDTO athleteByStartpassnummer = this.athleteRepository.findAthleteByStartpassnummer(startpassnummer);
+
+        if(athleteByStartpassnummer == null){
+
+            AthleteDTO athleteNotFound = new AthleteDTO(0, null, null, 0);
+
+            return athleteNotFound;
+        }
+
+        return athleteByStartpassnummer;
     }
 }

@@ -12,4 +12,6 @@ public interface AthleteRepository extends JpaRepository<AthleteDAO, Integer> {
 
     List<AthleteDTO>findAthleteBySurnameIgnoreCase(String surname);
 
+    AthleteDTO findAthleteByStartpassnummer(int startpassnumemr);
+
 }

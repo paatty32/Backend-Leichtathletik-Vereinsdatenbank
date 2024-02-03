@@ -41,5 +41,20 @@ public class AthleteController {
         return ResponseEntity.ok(athletesBySurname);
     }
 
+    @GetMapping("/startpassnummer/{startpassnummer}")
+    public ResponseEntity<AthleteDTO> getAthelteByStartpassnummer(@PathVariable int startpassnummer){
+
+        AthleteDTO athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
+
+        if(athleteByStartpassnummer.startpassnummer() == 0){
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        }
+
+        return ResponseEntity.ok(athleteByStartpassnummer);
+
+    }
+
 
 }
