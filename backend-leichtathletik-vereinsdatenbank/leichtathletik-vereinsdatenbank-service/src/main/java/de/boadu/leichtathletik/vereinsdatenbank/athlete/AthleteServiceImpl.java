@@ -1,9 +1,12 @@
 package de.boadu.leichtathletik.vereinsdatenbank.athlete;
 
+import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AgeGroupDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO;
+import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AgeGroupRepository;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AthleteRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,20 +15,31 @@ public class AthleteServiceImpl implements AthleteService {
 
     private final AthleteRepository athleteRepository;
 
-    public AthleteServiceImpl(AthleteRepository athleteRepository) {
+    private final AgeGroupRepository ageGroupRepository;
+
+    public AthleteServiceImpl(AthleteRepository athleteRepository, AgeGroupRepository ageGroupRepository) {
         this.athleteRepository = athleteRepository;
+        this.ageGroupRepository = ageGroupRepository;
     }
 
     @Override
-    public List<AthleteDTO> getAthletesByName(String name) {
+    public List<Athlete> getAthletesByName(String name) {
 
-        List<AthleteDTO> athletesByName = this.athleteRepository.findAthleteByNameIgnoreCase(name);
+        List<Athlete> athletesByName = new ArrayList<>();
 
-        if(athletesByName == null || athletesByName.isEmpty()){
+        List<AthleteDTO> foundAthletes = this.athleteRepository.findAthleteByNameIgnoreCase(name);
 
-            List<AthleteDTO> emptyList = new ArrayList<>();
+        if(foundAthletes == null || foundAthletes.isEmpty()){
 
-            return emptyList;
+            return athletesByName;
+
+        }
+
+        for(AthleteDTO foundAthlete: foundAthletes){
+
+            Athlete athlete = this.createAthlete(foundAthlete);
+
+            athletesByName.add(athlete);
 
         }
 
@@ -33,32 +47,83 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public List<AthleteDTO> getAthletesBySurname(String surname) {
+    public List<Athlete> getAthletesBySurname(String surname) {
 
-        List<AthleteDTO> athleteBySurnameIgnoreCase = this.athleteRepository.findAthleteBySurnameIgnoreCase(surname);
+        List<Athlete> athletesBySurname = new ArrayList<>();
 
-        if(athleteBySurnameIgnoreCase == null || athleteBySurnameIgnoreCase.isEmpty()){
+        List<AthleteDTO> foundAthletesBySurname = this.athleteRepository.findAthleteBySurnameIgnoreCase(surname);
 
-            List<AthleteDTO> emptyList = new ArrayList<>();
+        if(foundAthletesBySurname == null || foundAthletesBySurname.isEmpty()){
 
-            return emptyList;
+            return athletesBySurname;
         }
 
-        return athleteBySurnameIgnoreCase;
+        for(AthleteDTO athleteBySurname: foundAthletesBySurname){
+
+            Athlete athlete = this.createAthlete(athleteBySurname);
+
+            athletesBySurname.add(athlete);
+
+        }
+
+        return athletesBySurname;
     }
 
     @Override
-    public AthleteDTO getAthleteByStartpassnummer(int startpassnummer) {
+    public Athlete getAthleteByStartpassnummer(int startpassnummer) {
 
-        AthleteDTO athleteByStartpassnummer = this.athleteRepository.findAthleteByStartpassnummer(startpassnummer);
+        AthleteDTO foundAthleteByStartpassnummer = this.athleteRepository.findAthleteByStartpassnummer(startpassnummer);
 
-        if(athleteByStartpassnummer == null){
+        if(foundAthleteByStartpassnummer == null){
 
-            AthleteDTO athleteNotFound = new AthleteDTO(0, null, null, 0);
+            Athlete athleteNotFound = new Athlete(0, null, null,"");
 
             return athleteNotFound;
         }
 
-        return athleteByStartpassnummer;
+        return this.createAthlete(foundAthleteByStartpassnummer);
     }
+
+    private Athlete createAthlete(AthleteDTO athlete) {
+
+        String athleteAgeGroup = this.getAgeGroup(athlete);
+
+        return new Athlete(athlete.startpassnummer(),
+                athlete.name(),
+                athlete.surname(),
+                athleteAgeGroup);
+    }
+
+    private String getAgeGroup(AthleteDTO athlete) {
+
+        Year currentYear = Year.now();
+        int currentYearValue = currentYear.getValue();
+
+        int yearOfBirth = athlete.yearOfBirth();
+
+        int actualAge = currentYearValue - yearOfBirth;
+
+        AgeGroupDTO ageGroup = this.ageGroupRepository.findAgeGroup(actualAge);
+        String athleteAgeGroup = ageGroup.ageGroup();
+
+        if(isMan(athlete, athleteAgeGroup)){
+
+            athleteAgeGroup = "Männer";
+
+        } else if(isWoman(athlete, athleteAgeGroup)){
+
+            athleteAgeGroup = "Frauen";
+
+        }
+        return athleteAgeGroup;
+    }
+
+    private boolean isMan(AthleteDTO athlete, String athleteAgeGroup) {
+        return athleteAgeGroup.equals("Hauptklasse") && athlete.gender().equals("M");
+    }
+
+    private boolean isWoman(AthleteDTO athlete, String athleteAgeGroup) {
+        return athleteAgeGroup.equals("Hauptklasse") && athlete.gender().equals("W");
+    }
+
 }
