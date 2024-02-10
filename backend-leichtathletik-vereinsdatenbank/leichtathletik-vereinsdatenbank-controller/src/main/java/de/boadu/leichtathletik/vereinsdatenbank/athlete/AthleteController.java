@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin( origins = "http://localhost:4200")
 @RequestMapping("api/v1/athlete")
 public class AthleteController {
 
@@ -17,20 +18,23 @@ public class AthleteController {
         this.athleteService = athleteService;
     }
 
-    @GetMapping("/name/{name}")
-    public ResponseEntity<List<AthleteDTO>> getAthleteByName(@PathVariable String name){
+    @GetMapping("/name")
+    public ResponseEntity<List<AthleteRecord>> getAthleteByName(@RequestParam String name){
 
-        List<AthleteDTO> athletesByName = this.athleteService.getAthletesByName(name);
+        System.out.println("Received request for name: " + name);
+
+        List<AthleteRecord> athletesByName = this.athleteService.getAthletesByName(name);
 
         if(athletesByName.isEmpty()){
+            System.out.println("No athletes found for name: " + name);
             return new ResponseEntity<>(athletesByName, HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.ok(athletesByName);
     }
 
-    @GetMapping("/surname/{surname}")
-    public ResponseEntity<List<AthleteDTO>> getAthletesBySurname(@PathVariable String surname){
+    @GetMapping("/surname")
+    public ResponseEntity<List<AthleteDTO>> getAthletesBySurname(@RequestParam String surname){
 
         List<AthleteDTO> athletesBySurname = this.athleteService.getAthletesBySurname(surname);
 
@@ -41,8 +45,8 @@ public class AthleteController {
         return ResponseEntity.ok(athletesBySurname);
     }
 
-    @GetMapping("/startpassnummer/{startpassnummer}")
-    public ResponseEntity<AthleteDTO> getAthelteByStartpassnummer(@PathVariable int startpassnummer){
+    @GetMapping("/startpassnummer")
+    public ResponseEntity<AthleteDTO> getAthelteByStartpassnummer(@RequestParam int startpassnummer){
 
         AthleteDTO athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
 
