@@ -19,14 +19,11 @@ public class AthleteController {
     }
 
     @GetMapping("/name")
-    public ResponseEntity<List<AthleteRecord>> getAthleteByName(@RequestParam String name){
+    public ResponseEntity<List<Athlete>> getAthleteByName(@RequestParam String name){
 
-        System.out.println("Received request for name: " + name);
-
-        List<AthleteRecord> athletesByName = this.athleteService.getAthletesByName(name);
+        List<Athlete> athletesByName = this.athleteService.getAthletesByName(name);
 
         if(athletesByName.isEmpty()){
-            System.out.println("No athletes found for name: " + name);
             return new ResponseEntity<>(athletesByName, HttpStatus.NOT_FOUND);
         }
 
@@ -34,9 +31,9 @@ public class AthleteController {
     }
 
     @GetMapping("/surname")
-    public ResponseEntity<List<AthleteDTO>> getAthletesBySurname(@RequestParam String surname){
+    public ResponseEntity<List<Athlete>> getAthletesBySurname(@RequestParam String surname){
 
-        List<AthleteDTO> athletesBySurname = this.athleteService.getAthletesBySurname(surname);
+        List<Athlete> athletesBySurname = this.athleteService.getAthletesBySurname(surname);
 
         if(athletesBySurname.isEmpty()){
             return new ResponseEntity<>(athletesBySurname, HttpStatus.NOT_FOUND);
@@ -46,9 +43,9 @@ public class AthleteController {
     }
 
     @GetMapping("/startpassnummer")
-    public ResponseEntity<AthleteDTO> getAthelteByStartpassnummer(@RequestParam int startpassnummer){
+    public ResponseEntity<Athlete> getAthelteByStartpassnummer(@RequestParam int startpassnummer){
 
-        AthleteDTO athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
+        Athlete athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
 
         if(athleteByStartpassnummer.startpassnummer() == 0){
 
@@ -59,6 +56,5 @@ public class AthleteController {
         return ResponseEntity.ok(athleteByStartpassnummer);
 
     }
-
 
 }
