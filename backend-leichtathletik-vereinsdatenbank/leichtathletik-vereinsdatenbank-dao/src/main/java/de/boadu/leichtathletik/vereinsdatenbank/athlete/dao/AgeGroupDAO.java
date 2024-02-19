@@ -21,6 +21,4 @@ public class AgeGroupDAO {
     @Column(name="obere_grenze")
     private int upperLimit;
 
-
-
 }

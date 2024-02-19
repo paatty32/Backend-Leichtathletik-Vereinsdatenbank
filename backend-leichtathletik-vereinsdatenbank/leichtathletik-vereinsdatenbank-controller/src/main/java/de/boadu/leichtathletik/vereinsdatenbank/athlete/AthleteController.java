@@ -57,4 +57,19 @@ public class AthleteController {
 
     }
 
+    @GetMapping("/age-group")
+    public ResponseEntity<List<Athlete>> getAthletesByAgeGroup(@RequestParam String ageGroup){
+
+        List<Athlete> athletesByAgeGroup = this.athleteService.getAthletesByAgeGroup(ageGroup);
+
+        if(athletesByAgeGroup.isEmpty()){
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        }
+
+        return ResponseEntity.ok(athletesByAgeGroup);
+
+    }
+
 }

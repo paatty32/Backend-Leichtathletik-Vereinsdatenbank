@@ -1,6 +1,7 @@
 package de.boadu.leichtathletik.vereinsdatenbank.athlete;
 
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AgeGroupDTO;
+import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AgeGroupLimitsDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AgeGroupRepository;
 import de.boadu.leichtathletik.vereinsdatenbank.athlete.repository.AthleteRepository;
@@ -82,6 +83,65 @@ public class AthleteServiceImpl implements AthleteService {
         }
 
         return this.createAthlete(foundAthleteByStartpassnummer);
+    }
+
+    @Override
+    public List<Athlete> getAthletesByAgeGroup(String ageGroup) {
+
+        List<Athlete> athletesByAgeGroup = new ArrayList<>();
+
+        AgeGroupLimitsDTO ageGroupLimitsByAgeGroup;
+
+        if(ageGroup.equals("Männer") || ageGroup.equals("Frauen")){
+
+            ageGroupLimitsByAgeGroup= this.ageGroupRepository.findAgeGroupLimitsByAgeGroup("Hauptklasse");
+        } else {
+
+            ageGroupLimitsByAgeGroup = this.ageGroupRepository.findAgeGroupLimitsByAgeGroup(ageGroup);
+
+        }
+
+        int lowerAgeGroupLimit = ageGroupLimitsByAgeGroup.lowerLimit();
+        int upperAgeGroupLimit = ageGroupLimitsByAgeGroup.upperLimit();
+
+        int currentYear = Year.now().getValue();
+        int lowerAgeYearLimit = currentYear - lowerAgeGroupLimit;
+        int upperAgeYearLimit = currentYear - upperAgeGroupLimit;
+
+        List<AthleteDTO> foundAthletes = getAthletesBetweenYearLimits(ageGroup, lowerAgeYearLimit, upperAgeYearLimit);
+
+        if(foundAthletes == null || foundAthletes.isEmpty()){
+
+            return athletesByAgeGroup;
+        }
+
+        for(AthleteDTO athleteByAgeGroup: foundAthletes){
+
+            Athlete athlete = this.createAthlete(athleteByAgeGroup);
+
+            athletesByAgeGroup.add(athlete);
+
+        }
+
+        return athletesByAgeGroup;
+    }
+
+    private List<AthleteDTO> getAthletesBetweenYearLimits(String ageGroup, int lowerAgeYearLimit, int upperAgeYearLimit) {
+        List<AthleteDTO> foundAthletes;
+        if(ageGroup.equals("Männer")) {
+
+            foundAthletes = this.athleteRepository.findMenAthletesByAgeBetween(lowerAgeYearLimit, upperAgeYearLimit);
+
+        } else if(ageGroup.equals("Frauen")){
+
+            foundAthletes = this.athleteRepository.findWomanAthletesByAgeBetween(lowerAgeYearLimit, upperAgeYearLimit);
+
+        } else {
+
+            foundAthletes = this.athleteRepository.findAthletesByAgeBetween(lowerAgeYearLimit, upperAgeYearLimit);
+
+        }
+        return foundAthletes;
     }
 
     private Athlete createAthlete(AthleteDTO athlete) {

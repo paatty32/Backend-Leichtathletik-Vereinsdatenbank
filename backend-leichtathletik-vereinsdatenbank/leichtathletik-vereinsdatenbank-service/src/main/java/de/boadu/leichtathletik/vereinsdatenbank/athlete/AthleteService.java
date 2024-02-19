@@ -10,4 +10,5 @@ public interface AthleteService {
 
     Athlete getAthleteByStartpassnummer(int startpassnummer);
 
+    List<Athlete> getAthletesByAgeGroup(String ageGroup);
 }
