@@ -86,7 +86,9 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public List<Athlete> getAthletesByAgeGroup(String ageGroup) {
+    public List<Athlete> getAthletesByAgeGroup(String chosenAgeGroup) {
+
+        String ageGroup = chosenAgeGroup;
 
         List<Athlete> athletesByAgeGroup = new ArrayList<>();
 
@@ -95,6 +97,7 @@ public class AthleteServiceImpl implements AthleteService {
         if(ageGroup.equals("Männer") || ageGroup.equals("Frauen")){
 
             ageGroupLimitsByAgeGroup= this.ageGroupRepository.findAgeGroupLimitsByAgeGroup("Hauptklasse");
+
         } else {
 
             ageGroupLimitsByAgeGroup = this.ageGroupRepository.findAgeGroupLimitsByAgeGroup(ageGroup);
@@ -115,9 +118,9 @@ public class AthleteServiceImpl implements AthleteService {
             return athletesByAgeGroup;
         }
 
-        for(AthleteDTO athleteByAgeGroup: foundAthletes){
+        for(AthleteDTO foundAthlete: foundAthletes){
 
-            Athlete athlete = this.createAthlete(athleteByAgeGroup);
+            Athlete athlete = this.createAthleteWithAgeGroup(foundAthlete, ageGroup);
 
             athletesByAgeGroup.add(athlete);
 
@@ -126,8 +129,18 @@ public class AthleteServiceImpl implements AthleteService {
         return athletesByAgeGroup;
     }
 
+    private Athlete createAthleteWithAgeGroup(AthleteDTO athlete, String ageGroup) {
+
+        return new Athlete(athlete.startpassnummer(),
+                athlete.name(),
+                athlete.surname(),
+                ageGroup);
+    }
+
     private List<AthleteDTO> getAthletesBetweenYearLimits(String ageGroup, int lowerAgeYearLimit, int upperAgeYearLimit) {
+
         List<AthleteDTO> foundAthletes;
+
         if(ageGroup.equals("Männer")) {
 
             foundAthletes = this.athleteRepository.findMenAthletesByAgeBetween(lowerAgeYearLimit, upperAgeYearLimit);
@@ -158,9 +171,7 @@ public class AthleteServiceImpl implements AthleteService {
 
         Year currentYear = Year.now();
         int currentYearValue = currentYear.getValue();
-
         int yearOfBirth = athlete.yearOfBirth();
-
         int actualAge = currentYearValue - yearOfBirth;
 
         AgeGroupDTO ageGroup = this.ageGroupRepository.findAgeGroup(actualAge);
