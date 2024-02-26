@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin( origins = "http://localhost:4200")
 @RequestMapping("api/v1/athlete")
 public class AthleteController {
 
@@ -17,10 +18,10 @@ public class AthleteController {
         this.athleteService = athleteService;
     }
 
-    @GetMapping("/name/{name}")
-    public ResponseEntity<List<AthleteDTO>> getAthleteByName(@PathVariable String name){
+    @GetMapping("/name")
+    public ResponseEntity<List<Athlete>> getAthleteByName(@RequestParam String name){
 
-        List<AthleteDTO> athletesByName = this.athleteService.getAthletesByName(name);
+        List<Athlete> athletesByName = this.athleteService.getAthletesByName(name);
 
         if(athletesByName.isEmpty()){
             return new ResponseEntity<>(athletesByName, HttpStatus.NOT_FOUND);
@@ -29,10 +30,10 @@ public class AthleteController {
         return ResponseEntity.ok(athletesByName);
     }
 
-    @GetMapping("/surname/{surname}")
-    public ResponseEntity<List<AthleteDTO>> getAthletesBySurname(@PathVariable String surname){
+    @GetMapping("/surname")
+    public ResponseEntity<List<Athlete>> getAthletesBySurname(@RequestParam String surname){
 
-        List<AthleteDTO> athletesBySurname = this.athleteService.getAthletesBySurname(surname);
+        List<Athlete> athletesBySurname = this.athleteService.getAthletesBySurname(surname);
 
         if(athletesBySurname.isEmpty()){
             return new ResponseEntity<>(athletesBySurname, HttpStatus.NOT_FOUND);
@@ -41,10 +42,10 @@ public class AthleteController {
         return ResponseEntity.ok(athletesBySurname);
     }
 
-    @GetMapping("/startpassnummer/{startpassnummer}")
-    public ResponseEntity<AthleteDTO> getAthelteByStartpassnummer(@PathVariable int startpassnummer){
+    @GetMapping("/startpassnummer")
+    public ResponseEntity<Athlete> getAthelteByStartpassnummer(@RequestParam int startpassnummer){
 
-        AthleteDTO athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
+        Athlete athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
 
         if(athleteByStartpassnummer.startpassnummer() == 0){
 
@@ -56,5 +57,19 @@ public class AthleteController {
 
     }
 
+    @GetMapping("/age-group")
+    public ResponseEntity<List<Athlete>> getAthletesByAgeGroup(@RequestParam String ageGroup){
+
+        List<Athlete> athletesByAgeGroup = this.athleteService.getAthletesByAgeGroup(ageGroup);
+
+        if(athletesByAgeGroup.isEmpty()){
+
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        }
+
+        return ResponseEntity.ok(athletesByAgeGroup);
+
+    }
 
 }

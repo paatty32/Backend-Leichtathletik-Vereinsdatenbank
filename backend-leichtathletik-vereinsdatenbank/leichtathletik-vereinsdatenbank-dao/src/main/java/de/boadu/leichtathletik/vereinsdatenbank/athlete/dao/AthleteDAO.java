@@ -22,6 +22,9 @@ public class AthleteDAO {
     @Column(name="jahrgang")
     public int yearOfBirth;
 
+    @Column(name="geschlecht")
+    public String gender;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "startpassnummer" )
     public List<CompetitionResultsDAO> competitionResults;
 
