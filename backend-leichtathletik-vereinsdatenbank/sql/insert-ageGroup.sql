@@ -1,4 +1,4 @@
-INSERT INTO "Altersklasse" (alterklasse, untere_grenze, obere_grenze)
+INSERT INTO "altersklasse" (altersklasse, untere_grenze, obere_grenze)
        VALUES
            ('U16', 14, 15),
            ('U18', 16, 17),
