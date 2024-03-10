@@ -39,6 +39,12 @@ public class CompetitionResultsDAO {
     @Column(name="startpassnummer")
     private int startpassnummer;
 
+    @Column(name="altersklasse")
+    private String ageGroup;
+
+    @Column(name="link")
+    private String resultLink;
+
     @Override
     public String toString() {
         return this.result + " " + this.place;
