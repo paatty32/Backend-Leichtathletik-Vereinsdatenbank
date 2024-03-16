@@ -1,6 +1,6 @@
 package de.boadu.leichtathletik.vereinsdatenbank.athlete.dao;
 
-import de.boadu.leichtathletik.vereinsdatenbank.competitionresault.CompetitionResultsDAO;
+import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dao.CompetitionResultDAO;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -26,6 +26,6 @@ public class AthleteDAO {
     public String gender;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "startpassnummer" )
-    public List<CompetitionResultsDAO> competitionResults;
+    public List<CompetitionResultDAO> competitionResults;
 
 }
