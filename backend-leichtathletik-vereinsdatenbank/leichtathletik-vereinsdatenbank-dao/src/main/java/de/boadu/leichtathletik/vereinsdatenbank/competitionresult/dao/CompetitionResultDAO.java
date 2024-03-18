@@ -25,7 +25,7 @@ public class CompetitionResultDAO {
     private String dicipline;
 
     @Column(name="ergebnis")
-    private String result;
+    private Timestamp result;
 
     @Column(name="halle")
     private boolean isIndoor;
