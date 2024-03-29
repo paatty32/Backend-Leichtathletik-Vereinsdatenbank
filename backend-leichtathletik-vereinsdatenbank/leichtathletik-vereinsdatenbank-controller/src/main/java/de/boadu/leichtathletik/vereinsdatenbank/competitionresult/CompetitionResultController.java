@@ -1,7 +1,6 @@
 package de.boadu.leichtathletik.vereinsdatenbank.competitionresult;
 
 import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBest;
-import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +28,54 @@ public class CompetitionResultController {
         }
 
         return ResponseEntity.ok(personalBests);
+
+    }
+
+    @GetMapping("/seasonbest")
+    public ResponseEntity<List<PersonalBest>> getSeasonBestByStartpassnummeranYear(@RequestParam int startpassnummer,
+                                                                                   @RequestParam int year){
+
+        List<PersonalBest> seasonalBestsByYear = this.competitionResultService.getSeasonalBestOf(year, startpassnummer);
+
+        if(seasonalBestsByYear.isEmpty()){
+            return new ResponseEntity<>(seasonalBestsByYear, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(seasonalBestsByYear);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCompetitionCountByStartpassnummer(@RequestParam int startpassnummer){
+
+        Integer competitionCount = this.competitionResultService.getCompetitionCountOf(startpassnummer);
+
+        return ResponseEntity.ok(competitionCount);
+    }
+
+    @GetMapping("/countdiscipline")
+    public ResponseEntity<Integer> getDisciplineCountByStartpassnummer(@RequestParam int startpassnummer){
+
+        Integer disciplineCount = this.competitionResultService.getDisciplineCountOf(startpassnummer);
+
+        if(disciplineCount == 0){
+            return new ResponseEntity<>(disciplineCount, HttpStatus.NOT_FOUND);
+
+        }
+
+        return ResponseEntity.ok(disciplineCount);
+
+    }
+
+    @GetMapping("/competitionyears")
+    public ResponseEntity<List<Integer>> getCompetitionYearsByStartpassnummer(@RequestParam int startpassnummer){
+
+        List<Integer> competitionYears = this.competitionResultService.getCompetitionYearsOf(startpassnummer);
+
+        if(competitionYears.isEmpty()){
+            return new ResponseEntity<>(competitionYears, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(competitionYears);
 
     }
 }

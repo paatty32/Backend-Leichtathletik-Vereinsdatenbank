@@ -16,6 +16,9 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
 
     private final CompetitionResultRepository competitionResultRepository;
 
+    private String datePattern = "dd.MM.yyyy";
+    private String sprintResultPattern = "ss.SS";
+
     public CompetitionResultServiceImpl(CompetitionResultRepository competitionResultRepository) {
         this.competitionResultRepository = competitionResultRepository;
     }
@@ -27,21 +30,15 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
 
         List<PersonalBest> personalBests = new ArrayList<>();
 
-        String datePattern = "dd.MM.yyyy";
-        String sprintResultPattern = "ss.SS";
-
         athleteDisciplines.forEach(dicipline -> {
 
             PersonalBestDTO personalBestTemp = this.competitionResultRepository
                     .findPersonalBestByDisciplineAndStartpassnummer(dicipline.dicipline(), startpassnummer);
 
-            String formattedTime = this.formatTimeStamp(personalBestTemp.date(), datePattern);
-            String formattedResult = this.formatTimeStamp(personalBestTemp.result(), sprintResultPattern);
+            String formattedTime = this.formatTimeStamp(personalBestTemp.date(), this.datePattern);
+            String formattedResult = this.formatTimeStamp(personalBestTemp.result(), this.sprintResultPattern);
 
-            PersonalBest personalBest = new PersonalBest(formattedTime,
-                    formattedResult,
-                    personalBestTemp.place(),
-                    personalBestTemp.dicipline());
+            PersonalBest personalBest = createPersonalBest(formattedTime, formattedResult, personalBestTemp);
 
             personalBests.add(personalBest);
 
@@ -51,10 +48,60 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
 
     }
 
+    @Override
+    public List<PersonalBest> getSeasonalBestOf(int year, int startpassnummer) {
+
+        List<DiciplineDTO> athleteDisciplines = this.getDisciplinesBy(startpassnummer);
+
+        List<PersonalBest> seasonalBests = new ArrayList<>();
+
+        athleteDisciplines.forEach(dicipline -> {
+
+            PersonalBestDTO seasonBestByDisciplieTemp = this.competitionResultRepository
+                    .findPersonalBestByDisciplineAndYearAndStartpassnummer(year, startpassnummer, dicipline.dicipline());
+
+            String formattedTime = this.formatTimeStamp(seasonBestByDisciplieTemp.date(), this.datePattern);
+            String formattedResult = this.formatTimeStamp(seasonBestByDisciplieTemp.result(), this.sprintResultPattern);
+
+            PersonalBest seasonBestByDiscipline = createPersonalBest(formattedTime, formattedResult, seasonBestByDisciplieTemp);
+
+            seasonalBests.add(seasonBestByDiscipline);
+
+        });
+
+        return seasonalBests;
+    }
+
+    @Override
+    public Integer getCompetitionCountOf(int startpassnummer) {
+
+        Integer competitionCount = this.competitionResultRepository
+                                        .countResultByStartpassnummer(startpassnummer);
+
+        return competitionCount;
+    }
+
+    @Override
+    public Integer getDisciplineCountOf(int startpassnummer) {
+
+        Integer disciplineCount = this.competitionResultRepository
+                                        .countDiciplineByStartpassnummer(startpassnummer);
+
+        return disciplineCount;
+    }
+
+    @Override
+    public List<Integer> getCompetitionYearsOf(int startpassnummer) {
+
+        List<Integer> competitionYears = this.competitionResultRepository.findCompetitionYearsByStartpassnummer(startpassnummer);
+
+        return competitionYears;
+    }
+
     private List<DiciplineDTO> getDisciplinesBy(int startpassnummer){
 
         List<DiciplineDTO> athleteDisciplines = this.competitionResultRepository
-                .findDistinctDiciplineByStartpassnummer(startpassnummer);
+                                        .findDistinctDiciplineByStartpassnummer(startpassnummer);
 
         return athleteDisciplines;
     }
@@ -65,5 +112,15 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
         String formattedResult = resultFormat.format(result.toLocalDateTime());
 
         return  formattedResult;
+    }
+
+    private PersonalBest createPersonalBest(String formattedTime, String formattedResult, PersonalBestDTO personalBestTemp) {
+
+        PersonalBest personalBest = new PersonalBest(formattedTime,
+                formattedResult,
+                personalBestTemp.place(),
+                personalBestTemp.dicipline());
+        return personalBest;
+
     }
 }

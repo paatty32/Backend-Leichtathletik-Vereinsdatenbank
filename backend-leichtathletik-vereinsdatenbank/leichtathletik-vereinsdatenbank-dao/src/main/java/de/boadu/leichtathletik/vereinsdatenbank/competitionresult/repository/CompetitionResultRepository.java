@@ -14,6 +14,40 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
 
     List<DiciplineDTO> findDistinctDiciplineByStartpassnummer(int startpassnummer);
 
+    Integer countResultByStartpassnummer(int startpassnummer);
+
+    @Query("""
+    SELECT DISTINCT EXTRACT(YEAR FROM c.date)
+    FROM CompetitionResultDAO c 
+    WHERE c.startpassnummer = :startpassnummer
+    ORDER BY EXTRACT(YEAR FROM c.date) DESC
+    """)
+    List<Integer> findCompetitionYearsByStartpassnummer(@Param("startpassnummer") int startpassnummer);
+
+    @Query("""
+    SELECT COUNT(DISTINCT c.dicipline)
+    FROM CompetitionResultDAO c
+    WHERE c.startpassnummer = :startpassnummer
+    """)
+    Integer countDiciplineByStartpassnummer(@Param("startpassnummer") int startpassnummer);
+
+    @Query("""
+    SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO(
+    c.date, c.result , c.place, c.dicipline)
+    FROM CompetitionResultDAO c
+    WHERE EXTRACT(YEAR FROM c.date) = :seasonYear
+    AND 
+    c.startpassnummer = :startpassnummer
+    AND
+    c.dicipline = :dicipline
+    ORDER BY c.result asc
+    LIMIT 1
+    """)
+    PersonalBestDTO findPersonalBestByDisciplineAndYearAndStartpassnummer(@Param("seasonYear") int seasonYear,
+                                                                                @Param("startpassnummer") int startpassnummer,
+                                                                                @Param("dicipline") String dicipline);
+
+
     @Query("""
     SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO(
     c.date, c.result , c.place, c.dicipline)
