@@ -1,6 +1,7 @@
 package de.boadu.leichtathletik.vereinsdatenbank.competitionresult.repository;
 
 import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dao.CompetitionResultDAO;
+import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.CompetitionResultDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.DiciplineDTO;
 import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,9 +13,24 @@ import java.util.List;
 
 public interface CompetitionResultRepository extends JpaRepository<CompetitionResultDAO, BigInteger> {
 
-    List<DiciplineDTO> findDistinctDiciplineByStartpassnummer(int startpassnummer);
+    List<DiciplineDTO> findDistinctDiciplineByStartpassnummerOrderByDicipline(int startpassnummer);
 
     Integer countResultByStartpassnummer(int startpassnummer);
+
+    @Query("""
+    SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.CompetitionResultDTO(
+    c.date, c.result , c.place, c.resultLink)
+    FROM CompetitionResultDAO c
+    WHERE EXTRACT(YEAR FROM c.date) = :year
+    AND
+    c.startpassnummer = :startpassnummer
+    AND
+    c.dicipline = :dicipline
+    ORDER BY c.result asc
+    """)
+    List<CompetitionResultDTO> findResultByYear(@Param("startpassnummer") int startpassnummer,
+                                                @Param("year") int year,
+                                                @Param("dicipline") String dicipline);
 
     @Query("""
     SELECT DISTINCT EXTRACT(YEAR FROM c.date)
@@ -36,7 +52,7 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
     c.date, c.result , c.place, c.dicipline)
     FROM CompetitionResultDAO c
     WHERE EXTRACT(YEAR FROM c.date) = :seasonYear
-    AND 
+    AND
     c.startpassnummer = :startpassnummer
     AND
     c.dicipline = :dicipline
