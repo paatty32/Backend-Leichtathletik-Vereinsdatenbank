@@ -1,10 +1,12 @@
 package de.boadu.leichtathletik.vereinsdatenbank.competitionresult;
 
+import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.CompetitionResult;
 import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -35,11 +37,7 @@ public class CompetitionResultController {
     public ResponseEntity<List<PersonalBest>> getSeasonBestByStartpassnummeranYear(@RequestParam int startpassnummer,
                                                                                    @RequestParam int year){
 
-        List<PersonalBest> seasonalBestsByYear = this.competitionResultService.getSeasonalBestOf(year, startpassnummer);
-
-        if(seasonalBestsByYear.isEmpty()){
-            return new ResponseEntity<>(seasonalBestsByYear, HttpStatus.NOT_FOUND);
-        }
+        List<PersonalBest> seasonalBestsByYear = this.competitionResultService.getSeasonalBestOf(startpassnummer, year);
 
         return ResponseEntity.ok(seasonalBestsByYear);
     }
@@ -76,6 +74,20 @@ public class CompetitionResultController {
         }
 
         return ResponseEntity.ok(competitionYears);
+
+    }
+
+    @GetMapping("/results")
+    public ResponseEntity<HashMap<String, List<CompetitionResult>>> getCompetitionResultsOfYearByStartpassnummer(@RequestParam int startpassnummer,
+                                                                                                                 @RequestParam int year){
+
+        HashMap<String, List<CompetitionResult>> competitionResults = this.competitionResultService.getCompetitionResultsByYearOf(startpassnummer, year);
+
+        if(competitionResults.isEmpty()){
+            return new ResponseEntity<>(competitionResults, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(competitionResults);
 
     }
 }
