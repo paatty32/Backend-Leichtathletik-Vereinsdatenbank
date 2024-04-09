@@ -1,14 +1,13 @@
 package de.boadu.leichtathletik.vereinsdatenbank.competitionresult;
 
-import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.DiciplineDTO;
-import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBest;
-import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO;
+import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.*;
 import de.boadu.leichtathletik.vereinsdatenbank.competitionresult.repository.CompetitionResultRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -16,8 +15,8 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
 
     private final CompetitionResultRepository competitionResultRepository;
 
-    private String datePattern = "dd.MM.yyyy";
-    private String sprintResultPattern = "ss.SS";
+    private final String DATE_PATTERN = "dd.MM.yyyy";
+    private final String SPRINT_RESULT_PATTERN = "ss.SS";
 
     public CompetitionResultServiceImpl(CompetitionResultRepository competitionResultRepository) {
         this.competitionResultRepository = competitionResultRepository;
@@ -35,10 +34,7 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
             PersonalBestDTO personalBestTemp = this.competitionResultRepository
                     .findPersonalBestByDisciplineAndStartpassnummer(dicipline.dicipline(), startpassnummer);
 
-            String formattedTime = this.formatTimeStamp(personalBestTemp.date(), this.datePattern);
-            String formattedResult = this.formatTimeStamp(personalBestTemp.result(), this.sprintResultPattern);
-
-            PersonalBest personalBest = createPersonalBest(formattedTime, formattedResult, personalBestTemp);
+            PersonalBest personalBest = createPersonalBest(personalBestTemp);
 
             personalBests.add(personalBest);
 
@@ -49,7 +45,7 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
     }
 
     @Override
-    public List<PersonalBest> getSeasonalBestOf(int year, int startpassnummer) {
+    public List<PersonalBest> getSeasonalBestOf(int startpassnummer, int year) {
 
         List<DiciplineDTO> athleteDisciplines = this.getDisciplinesBy(startpassnummer);
 
@@ -60,12 +56,12 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
             PersonalBestDTO seasonBestByDisciplieTemp = this.competitionResultRepository
                     .findPersonalBestByDisciplineAndYearAndStartpassnummer(year, startpassnummer, dicipline.dicipline());
 
-            String formattedTime = this.formatTimeStamp(seasonBestByDisciplieTemp.date(), this.datePattern);
-            String formattedResult = this.formatTimeStamp(seasonBestByDisciplieTemp.result(), this.sprintResultPattern);
+            if(seasonBestByDisciplieTemp != null) {
 
-            PersonalBest seasonBestByDiscipline = createPersonalBest(formattedTime, formattedResult, seasonBestByDisciplieTemp);
-
-            seasonalBests.add(seasonBestByDiscipline);
+                PersonalBest seasonBestByDiscipline = this.createPersonalBest(seasonBestByDisciplieTemp);
+                
+                seasonalBests.add(seasonBestByDiscipline);
+            }
 
         });
 
@@ -98,10 +94,39 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
         return competitionYears;
     }
 
+    @Override
+    public HashMap<String, List<CompetitionResult>> getCompetitionResultsByYearOf(int startpassnummer, int year) {
+        List<DiciplineDTO> diciplinesByStartpassnummer = this.competitionResultRepository
+                .findDistinctDiciplineByStartpassnummerOrderByDicipline(startpassnummer);
+
+        HashMap<String, List<CompetitionResult>> competitionResults = new HashMap<>();
+
+        diciplinesByStartpassnummer.forEach( dicipline ->{
+            
+            List<CompetitionResult> results = new ArrayList<>();
+            
+            List<CompetitionResultDTO> resultByDicipline = this.competitionResultRepository
+                                                            .findResultByYear(startpassnummer, year, dicipline.dicipline());
+            if(!resultByDicipline.isEmpty()) {
+                resultByDicipline.forEach(result -> {
+
+                    CompetitionResult competitionResult = this.createCompetitionResult(result);
+
+                    results.add(competitionResult);
+
+                });
+                competitionResults.put(dicipline.dicipline(), results);
+            }
+        });
+
+
+        return competitionResults;
+    }
+
     private List<DiciplineDTO> getDisciplinesBy(int startpassnummer){
 
         List<DiciplineDTO> athleteDisciplines = this.competitionResultRepository
-                                        .findDistinctDiciplineByStartpassnummer(startpassnummer);
+                                        .findDistinctDiciplineByStartpassnummerOrderByDicipline(startpassnummer);
 
         return athleteDisciplines;
     }
@@ -114,12 +139,29 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
         return  formattedResult;
     }
 
-    private PersonalBest createPersonalBest(String formattedTime, String formattedResult, PersonalBestDTO personalBestTemp) {
+    private CompetitionResult createCompetitionResult(CompetitionResultDTO result) {
+
+        String formattedDate = this.formatTimeStamp(result.date(), this.DATE_PATTERN);
+        String formattedResult = this.formatTimeStamp(result.result(), this.SPRINT_RESULT_PATTERN);
+
+        CompetitionResult competitionResult = new CompetitionResult(formattedDate,
+                formattedResult,
+                result.place(),
+                result.resultLink());
+
+        return competitionResult;
+    }
+
+    private PersonalBest createPersonalBest(PersonalBestDTO personalBestDTO) {
+
+        String formattedTime = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
+        String formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.SPRINT_RESULT_PATTERN);
 
         PersonalBest personalBest = new PersonalBest(formattedTime,
                 formattedResult,
-                personalBestTemp.place(),
-                personalBestTemp.dicipline());
+                personalBestDTO.place(),
+                personalBestDTO.dicipline());
+
         return personalBest;
 
     }
