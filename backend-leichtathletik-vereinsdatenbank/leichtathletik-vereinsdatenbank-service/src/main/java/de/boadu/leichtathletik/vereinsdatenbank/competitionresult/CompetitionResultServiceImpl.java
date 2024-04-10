@@ -24,24 +24,29 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
 
     @Override
     public List<PersonalBest> getPersonalBestsOf(int startpassnummer) {
-
         List<DiciplineDTO> athleteDisciplines = this.getDisciplinesBy(startpassnummer);
 
-        List<PersonalBest> personalBests = new ArrayList<>();
-
-        athleteDisciplines.forEach(dicipline -> {
-
-            PersonalBestDTO personalBestTemp = this.competitionResultRepository
-                    .findPersonalBestByDisciplineAndStartpassnummer(dicipline.dicipline(), startpassnummer);
-
-            PersonalBest personalBest = createPersonalBest(personalBestTemp);
-
-            personalBests.add(personalBest);
-
-        });
+        List<PersonalBest> personalBests = getPersonalBests(startpassnummer, athleteDisciplines);
 
         return personalBests;
+    }
 
+    private List<PersonalBest> getPersonalBests(int startpassnummer, List<DiciplineDTO> athleteDisciplines) {
+        List<PersonalBest> personalBests = new ArrayList<>();
+
+        if(athleteDisciplines != null) {
+            athleteDisciplines.forEach(discipline -> {
+
+                PersonalBestDTO personalBestTemp = this.competitionResultRepository
+                        .findPersonalBestByDisciplineAndStartpassnummer(discipline.dicipline(), startpassnummer);
+
+                PersonalBest personalBest = createPersonalBest(personalBestTemp);
+
+                personalBests.add(personalBest);
+
+            });
+        }
+        return personalBests;
     }
 
     @Override
@@ -118,8 +123,6 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
                 competitionResults.put(dicipline.dicipline(), results);
             }
         });
-
-
         return competitionResults;
     }
 
