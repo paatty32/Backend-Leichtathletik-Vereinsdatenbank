@@ -1,4 +1,4 @@
-package de.boadu.leichtathletik.vereinsdatenbank.competitionresault;
+package de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dao;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name="wettkampfergebnis")
-public class CompetitionResultsDAO {
+public class CompetitionResultDAO {
 
     @Id
     private BigInteger id;
@@ -25,7 +25,7 @@ public class CompetitionResultsDAO {
     private String dicipline;
 
     @Column(name="ergebnis")
-    private String result;
+    private Timestamp result;
 
     @Column(name="halle")
     private boolean isIndoor;
@@ -38,6 +38,12 @@ public class CompetitionResultsDAO {
 
     @Column(name="startpassnummer")
     private int startpassnummer;
+
+    @Column(name="altersklasse")
+    private String ageGroup;
+
+    @Column(name="link")
+    private String resultLink;
 
     @Override
     public String toString() {
