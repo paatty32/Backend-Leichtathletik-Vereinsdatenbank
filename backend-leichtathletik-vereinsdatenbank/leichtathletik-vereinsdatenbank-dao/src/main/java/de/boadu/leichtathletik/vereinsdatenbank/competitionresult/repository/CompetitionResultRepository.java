@@ -75,6 +75,6 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
     ORDER BY c.result asc
     LIMIT 1
     """)
-    PersonalBestDTO findPersonalBestByDisciplineAndStartpassnummer(@Param("dicipline") String dicipline,
-                                                                   @Param("startpassnummer") int startpassnummer);
+    PersonalBestDTO findPersonalBestByDiscipline(@Param("dicipline") String dicipline,
+                                                 @Param("startpassnummer") int startpassnummer);
 }
