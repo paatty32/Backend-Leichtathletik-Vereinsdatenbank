@@ -65,8 +65,10 @@ public class CompetitionResultServiceTest {
         this.hundredMeterPB = new PersonalBestDTO(this.dateTimeStamp, resultTimeStamp, "Düsseldorf", "100m");
         this.twoHundredMeterPB = new PersonalBestDTO(twoHundredMeterDateTimestamp, twoHundredMeterResultTimestamp, "Düsseldorf", "200m");
 
-        this.hundredMeterResult = new CompetitionResultDTO(this.dateTimeStamp, resultTimeStamp, "Köln", "");
-        this.twoHundredMeterResult = new CompetitionResultDTO(this.twoHundredMeterDateTimestamp, this.twoHundredMeterResultTimestamp, "köln", "");
+        this.hundredMeterResult = new CompetitionResultDTO(this.dateTimeStamp,
+                resultTimeStamp, "Köln", "", "U23", "100m");
+        this.twoHundredMeterResult = new CompetitionResultDTO(this.twoHundredMeterDateTimestamp,
+                this.twoHundredMeterResultTimestamp, "köln", "", "U23", "200m");
     }
 
     @Test
