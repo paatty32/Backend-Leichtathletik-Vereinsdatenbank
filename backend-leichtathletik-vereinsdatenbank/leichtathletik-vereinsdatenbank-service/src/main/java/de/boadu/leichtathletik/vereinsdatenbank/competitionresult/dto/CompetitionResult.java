@@ -4,6 +4,8 @@ public record CompetitionResult(
         String date,
         String result,
         String place,
-        String resultLink
+        String resultLink,
+        String ageGroup,
+        boolean collapseDetails
 ) {
 }
