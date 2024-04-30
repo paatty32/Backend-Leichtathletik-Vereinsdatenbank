@@ -6,6 +6,8 @@ public record CompetitionResultDTO(
         Timestamp date,
         Timestamp result,
         String place,
-        String resultLink
+        String resultLink,
+        String ageGroup,
+        String dicipline
 ) {
 }
