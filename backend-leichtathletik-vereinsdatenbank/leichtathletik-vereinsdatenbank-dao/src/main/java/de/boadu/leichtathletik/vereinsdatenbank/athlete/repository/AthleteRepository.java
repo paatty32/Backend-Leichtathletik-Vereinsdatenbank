@@ -10,11 +10,20 @@ import java.util.List;
 
 public interface AthleteRepository extends JpaRepository<AthleteDAO, Integer> {
 
-    List<AthleteDTO> findAthleteByNameIgnoreCase(String name);
+    @Query("""
+    SELECT new de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO(a.startpassnummer, a.name, a.surname, a.yearOfBirth, a.gender)
+    FROM AthleteDAO a
+    WHERE LOWER(a.surname) LIKE :name OR LOWER(a.name) LIKE :name
+    OR LOWER(CONCAT(a.name, ' ', a.surname)) LIKE :name
+    """)
+    List<AthleteDTO> findAthleteByNameIgnoreCase(@Param("name") String name);
 
-    List<AthleteDTO>findAthleteBySurnameIgnoreCase(String surname);
-
-    AthleteDTO findAthleteByStartpassnummer(int startpassnumemr);
+    @Query("""
+    SELECT new de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO(a.startpassnummer, a.name, a.surname, a.yearOfBirth, a.gender)
+    FROM AthleteDAO a
+    WHERE CAST(a.startpassnummer AS string) LIKE :startpassnummer
+    """)
+    List<AthleteDTO> findAthleteByStartpassnummer(@Param("startpassnummer") String startpassnummer);
 
     @Query("""
     SELECT new de.boadu.leichtathletik.vereinsdatenbank.athlete.dto.AthleteDTO(a.startpassnummer, a.name, a.surname, a.yearOfBirth, a.gender)
