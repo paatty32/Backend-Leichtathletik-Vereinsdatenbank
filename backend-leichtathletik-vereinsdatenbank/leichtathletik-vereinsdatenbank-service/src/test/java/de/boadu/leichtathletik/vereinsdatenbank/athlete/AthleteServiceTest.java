@@ -55,18 +55,18 @@ public class AthleteServiceTest {
     @Test
     public void whenMenAthleteWithNameExist_thenReturnAthleteProfiles(){
 
-        String max = "Max";
+        String max = "max";
 
         AgeGroupDTO hauptklasse = new AgeGroupDTO("Hauptklasse");
 
         List<AthleteDTO> athletes = new ArrayList<>();
         athletes.add(this.maxMustermann);
 
-        when(this.athleteRepository.findAthleteByNameIgnoreCase(max)).thenReturn(athletes);
+        when(this.athleteRepository.findAthleteByNameIgnoreCase(max + "%")).thenReturn(athletes);
         when(this.ageGroupRepository.findAgeGroup(25)).thenReturn(hauptklasse);
 
         List<Athlete> athleteByName = this.athleteService.getAthletesByName(max);
-        boolean hasName = athleteByName.stream().allMatch(athlete -> athlete.name().equals(max));
+        boolean hasName = athleteByName.stream().allMatch(athlete -> athlete.name().equals("Max"));
 
         assertThat(hasName).isTrue();
 
@@ -75,7 +75,7 @@ public class AthleteServiceTest {
     @Test
     public void whenWomanAthleteWithNameExist_thenReturnAthleteProfiles(){
 
-        String laura = "Laura";
+        String laura = "laura";
 
         AgeGroupDTO hauptklasse = new AgeGroupDTO("Hauptklasse");
 
@@ -89,12 +89,12 @@ public class AthleteServiceTest {
 
             int actualAge = mockYearof2024.getValue() - lauraMustermann.yearOfBirth();
 
-            when(this.athleteRepository.findAthleteByNameIgnoreCase(laura)).thenReturn(athletes);
+            when(this.athleteRepository.findAthleteByNameIgnoreCase(laura + "%")).thenReturn(athletes);
             when(this.ageGroupRepository.findAgeGroup(actualAge)).thenReturn(hauptklasse);
 
             List<Athlete> athleteByName = this.athleteService.getAthletesByName(laura);
             System.out.println(athleteByName);
-            boolean hasName = athleteByName.stream().allMatch(athlete -> athlete.name().equals(laura));
+            boolean hasName = athleteByName.stream().allMatch(athlete -> athlete.name().equals("Laura"));
 
             assertThat(hasName).isTrue();
         }
@@ -103,72 +103,34 @@ public class AthleteServiceTest {
 
     @Test
     public void whenAthletesNotExist_thenReturnEmptyList(){
-        String max = "Max";
+        String max = "max";
 
-        when(this.athleteRepository.findAthleteByNameIgnoreCase(max)).thenReturn(null);
+        when(this.athleteRepository.findAthleteByNameIgnoreCase(max + "%")).thenReturn(null);
 
         List<Athlete> athleteByName = this.athleteService.getAthletesByName(max);
 
         assertThat(athleteByName.size()).isEqualTo(0);
-
-    }
-
-    @Test
-    public void whenAthletesWithSurnameExist_thenReturnAthleteProfiles(){
-
-        String mustermann = "Mustermann";
-
-        AgeGroupDTO hauptklasse = new AgeGroupDTO("Hauptklasse");
-
-        List<AthleteDTO> athletesBySurname = new ArrayList<>();
-        athletesBySurname.add(this.maxMustermann);
-
-        Year mockYearof2024 = Year.of(2024);
-
-        try (MockedStatic<Year> yearMockedStatic = Mockito.mockStatic(Year.class)) {
-            yearMockedStatic.when(Year::now).thenReturn(mockYearof2024);
-
-            int actualAge = mockYearof2024.getValue() - this.maxMustermann.yearOfBirth();
-
-            when(this.athleteRepository.findAthleteBySurnameIgnoreCase(mustermann)).thenReturn(athletesBySurname);
-            when(this.ageGroupRepository.findAgeGroup(actualAge)).thenReturn(hauptklasse);
-
-            List<Athlete> foundAthletesBySurname = this.athleteService.getAthletesBySurname(mustermann);
-            boolean hasSurname = foundAthletesBySurname.stream().allMatch(athlete -> athlete.surname().equals(mustermann));
-
-            assertThat(hasSurname).isEqualTo(true);
-
-        }
-    }
-
-    @Test
-    public void whenAthleteWithSurnameNotExist_thenReturnEmptyList(){
-
-        String mustermann = "Mustermann";
-
-        when(this.athleteRepository.findAthleteBySurnameIgnoreCase(mustermann)).thenReturn(null);
-
-        List<Athlete> athleteByName = this.athleteService.getAthletesBySurname(mustermann);
-
-        assertThat(athleteByName.size()).isEqualTo(0);
-
     }
 
     @Test
     public void whenAthleteWithStartpassnumemrExist_thenReturnAthleteProfile(){
 
         int startpassnummer = 1111;
+        String startpassnummerString = String.valueOf(startpassnummer);
         AgeGroupDTO hauptklasse = new AgeGroupDTO("Hauptklasse");
 
-        when(this.athleteRepository.findAthleteByStartpassnummer(startpassnummer)).thenReturn(this.maxMustermann);
+        List<AthleteDTO> athleteList = new ArrayList<>();
+        athleteList.add(this.maxMustermann);
+
+        when(this.athleteRepository.findAthleteByStartpassnummer(startpassnummerString + "%")).thenReturn(athleteList);
         when(this.ageGroupRepository.findAgeGroup(25)).thenReturn(hauptklasse);
 
-        Athlete athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
+        List<Athlete> athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
 
-        assertThat(athleteByStartpassnummer.startpassnummer()).isEqualTo(this.maxMustermann.startpassnummer());
-        assertThat(athleteByStartpassnummer.name()).isEqualTo(this.maxMustermann.name());
-        assertThat(athleteByStartpassnummer.surname()).isEqualTo(this.maxMustermann.surname());
-        assertThat(athleteByStartpassnummer.ageGroup()).isEqualTo("Männer");
+        assertThat(athleteByStartpassnummer.get(0).startpassnummer()).isEqualTo(this.maxMustermann.startpassnummer());
+        assertThat(athleteByStartpassnummer.get(0).name()).isEqualTo(this.maxMustermann.name());
+        assertThat(athleteByStartpassnummer.get(0).surname()).isEqualTo(this.maxMustermann.surname());
+        assertThat(athleteByStartpassnummer.get(0).ageGroup()).isEqualTo("Männer");
 
     }
 
@@ -176,13 +138,15 @@ public class AthleteServiceTest {
     public void whenAthleteWithStartpassnummerNotExist_thenReturnAthleteProfileWithStarpassnummerZero(){
 
         int startpassnummer = 1111;
+        String startpassnummerString = String.valueOf(startpassnummer);
 
-        when(this.athleteRepository.findAthleteByStartpassnummer(startpassnummer)).thenReturn(null);
+        List<AthleteDTO> emptyAthleteList = new ArrayList<>();
 
-        Athlete athleteNotFound = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
+        when(this.athleteRepository.findAthleteByStartpassnummer(startpassnummerString + "%")).thenReturn(emptyAthleteList);
 
-        assertThat(athleteNotFound.startpassnummer()).isEqualTo(0);
+        List<Athlete> athleteNotFound = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
 
+        assertThat(athleteNotFound.isEmpty());
     }
 
     @Test

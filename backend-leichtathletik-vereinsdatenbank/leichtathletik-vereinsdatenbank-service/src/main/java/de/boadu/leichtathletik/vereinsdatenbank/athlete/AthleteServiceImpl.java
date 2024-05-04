@@ -28,61 +28,42 @@ public class AthleteServiceImpl implements AthleteService {
 
         List<Athlete> athletesByName = new ArrayList<>();
 
-        List<AthleteDTO> foundAthletes = this.athleteRepository.findAthleteByNameIgnoreCase(name);
+        String wildcard = "%";
+        String searchedName = name.toLowerCase() + wildcard;
+
+        List<AthleteDTO> foundAthletes = this.athleteRepository.findAthleteByNameIgnoreCase(searchedName);
 
         if(foundAthletes == null || foundAthletes.isEmpty()){
-
             return athletesByName;
-
         }
 
         for(AthleteDTO foundAthlete: foundAthletes){
-
             Athlete athlete = this.createAthlete(foundAthlete);
-
             athletesByName.add(athlete);
-
         }
 
         return athletesByName;
     }
 
     @Override
-    public List<Athlete> getAthletesBySurname(String surname) {
+    public List<Athlete> getAthleteByStartpassnummer(int startpassnummer) {
 
-        List<Athlete> athletesBySurname = new ArrayList<>();
+        String wildcard = "%";
 
-        List<AthleteDTO> foundAthletesBySurname = this.athleteRepository.findAthleteBySurnameIgnoreCase(surname);
+        List<Athlete> athletes = new ArrayList<>();
 
-        if(foundAthletesBySurname == null || foundAthletesBySurname.isEmpty()){
+        String convertedStartpassnummer = String.valueOf(startpassnummer);
+        convertedStartpassnummer = convertedStartpassnummer + wildcard;
+        List<AthleteDTO> foundAthleteByStartpassnummer = this.athleteRepository.findAthleteByStartpassnummer(convertedStartpassnummer);
 
-            return athletesBySurname;
+        if(foundAthleteByStartpassnummer != null){
+            foundAthleteByStartpassnummer.forEach(athlete -> {
+                Athlete createdAthlete  = this.createAthlete(athlete);
+                athletes.add(createdAthlete);
+            });
         }
 
-        for(AthleteDTO athleteBySurname: foundAthletesBySurname){
-
-            Athlete athlete = this.createAthlete(athleteBySurname);
-
-            athletesBySurname.add(athlete);
-
-        }
-
-        return athletesBySurname;
-    }
-
-    @Override
-    public Athlete getAthleteByStartpassnummer(int startpassnummer) {
-
-        AthleteDTO foundAthleteByStartpassnummer = this.athleteRepository.findAthleteByStartpassnummer(startpassnummer);
-
-        if(foundAthleteByStartpassnummer == null){
-
-            Athlete athleteNotFound = new Athlete(0, null, null,"");
-
-            return athleteNotFound;
-        }
-
-        return this.createAthlete(foundAthleteByStartpassnummer);
+        return athletes;
     }
 
     @Override
