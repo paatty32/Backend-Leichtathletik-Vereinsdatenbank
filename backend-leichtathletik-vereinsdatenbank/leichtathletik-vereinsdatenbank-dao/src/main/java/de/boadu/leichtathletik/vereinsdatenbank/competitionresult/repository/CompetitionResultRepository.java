@@ -19,7 +19,7 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
 
     @Query("""
     SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.CompetitionResultDTO(
-    c.date, c.result , c.place, c.resultLink)
+    c.date, c.result , c.place, c.resultLink, c.ageGroup, c.dicipline)
     FROM CompetitionResultDAO c
     WHERE EXTRACT(YEAR FROM c.date) = :year
     AND

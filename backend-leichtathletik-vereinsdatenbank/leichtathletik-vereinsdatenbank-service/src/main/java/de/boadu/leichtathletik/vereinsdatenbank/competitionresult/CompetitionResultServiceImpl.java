@@ -17,6 +17,7 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
 
     private final String DATE_PATTERN = "dd.MM.yyyy";
     private final String SPRINT_RESULT_PATTERN = "ss.SS";
+    private final String DISCTANCE_RESULT_PATTERN = "mm:ss.SS";
 
     public CompetitionResultServiceImpl(CompetitionResultRepository competitionResultRepository) {
         this.competitionResultRepository = competitionResultRepository;
@@ -143,22 +144,45 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
     }
 
     private CompetitionResult createCompetitionResult(CompetitionResultDTO result) {
-        String formattedDate = this.formatTimeStamp(result.date(), this.DATE_PATTERN);
-        String formattedResult = this.formatTimeStamp(result.result(), this.SPRINT_RESULT_PATTERN);
+        String formattedDate;
+        String formattedResult;
+
+        if (result.dicipline().equals("100m") || result.dicipline().equals("200m") || result.dicipline().equals("60m")){
+             formattedDate = this.formatTimeStamp(result.date(), this.DATE_PATTERN);
+             formattedResult = this.formatTimeStamp(result.result(), this.SPRINT_RESULT_PATTERN);
+        } else {
+             formattedDate = this.formatTimeStamp(result.date(), this.DATE_PATTERN);
+             formattedResult = this.formatTimeStamp(result.result(), this.DISCTANCE_RESULT_PATTERN);
+        }
 
         CompetitionResult competitionResult = new CompetitionResult(formattedDate,
                 formattedResult,
                 result.place(),
-                result.resultLink());
+                result.resultLink(),
+                result.ageGroup(),
+                true);
 
         return competitionResult;
     }
 
     private PersonalBest createPersonalBest(PersonalBestDTO personalBestDTO) {
-        String formattedTime = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
-        String formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.SPRINT_RESULT_PATTERN);
+        String formattedDate;
+        String formattedResult;
 
-        PersonalBest personalBest = new PersonalBest(formattedTime,
+        if (personalBestDTO.dicipline().equals("100m") || personalBestDTO.dicipline().equals("200m")
+                || personalBestDTO.dicipline().equals("300m")
+                || personalBestDTO.dicipline().equals("60m")
+                || personalBestDTO.dicipline().equals("75m")
+                || personalBestDTO.dicipline().equals("400m")
+                || personalBestDTO.dicipline().equals("50m")){
+            formattedDate = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
+            formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.SPRINT_RESULT_PATTERN);
+        } else {
+            formattedDate = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
+            formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.DISCTANCE_RESULT_PATTERN);
+        }
+
+        PersonalBest personalBest = new PersonalBest(formattedDate,
                 formattedResult,
                 personalBestDTO.place(),
                 personalBestDTO.dicipline());

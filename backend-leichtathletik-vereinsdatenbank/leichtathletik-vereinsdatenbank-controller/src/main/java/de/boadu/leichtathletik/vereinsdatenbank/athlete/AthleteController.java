@@ -19,7 +19,6 @@ public class AthleteController {
 
     @GetMapping("/name")
     public ResponseEntity<List<Athlete>> getAthleteByName(@RequestParam String name){
-
         List<Athlete> athletesByName = this.athleteService.getAthletesByName(name);
 
         if(athletesByName.isEmpty()){
@@ -29,46 +28,25 @@ public class AthleteController {
         return ResponseEntity.ok(athletesByName);
     }
 
-    @GetMapping("/surname")
-    public ResponseEntity<List<Athlete>> getAthletesBySurname(@RequestParam String surname){
-
-        List<Athlete> athletesBySurname = this.athleteService.getAthletesBySurname(surname);
-
-        if(athletesBySurname.isEmpty()){
-            return new ResponseEntity<>(athletesBySurname, HttpStatus.NOT_FOUND);
-        }
-
-        return ResponseEntity.ok(athletesBySurname);
-    }
-
     @GetMapping("/startpassnummer")
-    public ResponseEntity<Athlete> getAthelteByStartpassnummer(@RequestParam int startpassnummer){
+    public ResponseEntity<List<Athlete>> getAthelteByStartpassnummer(@RequestParam int startpassnummer){
+        List<Athlete> athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
 
-        Athlete athleteByStartpassnummer = this.athleteService.getAthleteByStartpassnummer(startpassnummer);
-
-        if(athleteByStartpassnummer.startpassnummer() == 0){
-
+        if(athleteByStartpassnummer.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         }
 
         return ResponseEntity.ok(athleteByStartpassnummer);
-
     }
 
     @GetMapping("/age-group")
     public ResponseEntity<List<Athlete>> getAthletesByAgeGroup(@RequestParam String ageGroup){
-
         List<Athlete> athletesByAgeGroup = this.athleteService.getAthletesByAgeGroup(ageGroup);
 
         if(athletesByAgeGroup.isEmpty()){
-
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         }
 
         return ResponseEntity.ok(athletesByAgeGroup);
-
     }
-
 }
