@@ -170,8 +170,11 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
         String formattedResult;
 
         if (personalBestDTO.dicipline().equals("100m") || personalBestDTO.dicipline().equals("200m")
-                || personalBestDTO.dicipline().equals("60m") || personalBestDTO.dicipline().equals("75m")
-                || personalBestDTO.dicipline().equals("400m") || personalBestDTO.dicipline().equals("50m")){
+                || personalBestDTO.dicipline().equals("300m")
+                || personalBestDTO.dicipline().equals("60m")
+                || personalBestDTO.dicipline().equals("75m")
+                || personalBestDTO.dicipline().equals("400m")
+                || personalBestDTO.dicipline().equals("50m")){
             formattedDate = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
             formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.SPRINT_RESULT_PATTERN);
         } else {
