@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySources;
 
 @SpringBootApplication
 @PropertySources({
-		@PropertySource("classpath:dao-application.properties")
+		@PropertySource("classpath:application.properties")
 })
 public class LeichtathletikVereinsdatenbankApplication {
 
