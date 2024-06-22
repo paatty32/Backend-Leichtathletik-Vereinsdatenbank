@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@CrossOrigin( origins = "http://localhost:4200")
+@CrossOrigin
 @RequestMapping("api/v1/competition")
 public class CompetitionResultController {
 
