@@ -150,6 +150,16 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
         if (result.dicipline().equals("100m") || result.dicipline().equals("200m") || result.dicipline().equals("60m")){
              formattedDate = this.formatTimeStamp(result.date(), this.DATE_PATTERN);
              formattedResult = this.formatTimeStamp(result.result(), this.SPRINT_RESULT_PATTERN);
+
+             if(result.wind() != 0.0) {
+                String resultStringValue = String.valueOf(result.wind());
+
+                if(result.wind() > 0){
+                    formattedResult = formattedResult + " (" +  "+" + resultStringValue + ")";
+                } else {
+                    formattedResult = formattedResult + " (" + resultStringValue + ")";
+                }
+            }
         } else {
              formattedDate = this.formatTimeStamp(result.date(), this.DATE_PATTERN);
              formattedResult = this.formatTimeStamp(result.result(), this.DISCTANCE_RESULT_PATTERN);
@@ -177,6 +187,16 @@ public class CompetitionResultServiceImpl implements CompetitionResultService{
                 || personalBestDTO.dicipline().equals("50m")){
             formattedDate = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
             formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.SPRINT_RESULT_PATTERN);
+
+            if(personalBestDTO.wind() != 0.0) {
+                String resultStringValue = String.valueOf(personalBestDTO.wind());
+
+                if(personalBestDTO.wind() > 0){
+                    formattedResult = formattedResult + " (" +  "+" + resultStringValue + ")";
+                } else {
+                    formattedResult = formattedResult + " (" + resultStringValue + ")";
+                }
+            }
         } else {
             formattedDate = this.formatTimeStamp(personalBestDTO.date(), this.DATE_PATTERN);
             formattedResult = this.formatTimeStamp(personalBestDTO.result(), this.DISCTANCE_RESULT_PATTERN);
