@@ -8,6 +8,7 @@ public record CompetitionResultDTO(
         String place,
         String resultLink,
         String ageGroup,
-        String dicipline
+        String dicipline,
+        double wind
 ) {
 }

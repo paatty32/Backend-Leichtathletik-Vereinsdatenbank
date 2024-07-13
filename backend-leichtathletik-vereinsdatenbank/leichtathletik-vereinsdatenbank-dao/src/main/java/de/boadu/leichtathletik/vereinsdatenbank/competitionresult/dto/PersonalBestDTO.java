@@ -6,6 +6,7 @@ public record PersonalBestDTO(
         Timestamp date,
         Timestamp result,
         String place,
-        String dicipline
+        String dicipline,
+        double wind
 ) {
 }
