@@ -19,7 +19,7 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
 
     @Query("""
     SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.CompetitionResultDTO(
-    c.date, c.result , c.place, c.resultLink, c.ageGroup, c.dicipline)
+    c.date, c.result , c.place, c.resultLink, c.ageGroup, c.dicipline, c.wind)
     FROM CompetitionResultDAO c
     WHERE EXTRACT(YEAR FROM c.date) = :year
     AND
@@ -49,13 +49,15 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
 
     @Query("""
     SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO(
-    c.date, c.result , c.place, c.dicipline)
+    c.date, c.result , c.place, c.dicipline, c.wind)
     FROM CompetitionResultDAO c
     WHERE EXTRACT(YEAR FROM c.date) = :seasonYear
     AND
     c.startpassnummer = :startpassnummer
     AND
     c.dicipline = :dicipline
+    AND
+    c.wind <= 2.0 
     ORDER BY c.result asc
     LIMIT 1
     """)
@@ -66,12 +68,14 @@ public interface CompetitionResultRepository extends JpaRepository<CompetitionRe
 
     @Query("""
     SELECT new de.boadu.leichtathletik.vereinsdatenbank.competitionresult.dto.PersonalBestDTO(
-    c.date, c.result , c.place, c.dicipline)
+    c.date, c.result , c.place, c.dicipline, c.wind)
     FROM CompetitionResultDAO c
     WHERE
     c.startpassnummer = :startpassnummer
     AND
     c.dicipline = :dicipline
+    AND
+    c.wind <= 2.0 
     ORDER BY c.result asc
     LIMIT 1
     """)
