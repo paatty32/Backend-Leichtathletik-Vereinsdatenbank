@@ -31,7 +31,7 @@ public class CompetitionResultDAO {
     private boolean isIndoor;
 
     @Column(name="wind")
-    private String wind;
+    private double wind;
 
     @Column(name="kommentar")
     private String comment;
